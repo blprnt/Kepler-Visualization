@@ -1,0 +1,15 @@
+/*
+
+Kepler Visualization Tool
+blprnt@blprnt.com
+Spring, 2011 - released w/ new Data Spring 2012
+
+This is a Processing sketch to visualize data from NASA's Kepler mission.
+
+Obviously, you'll need Processing installed - http://processing.org
+
+Also, you'll need Kaersten Schmidt's amazing toxiclibs - http://toxiclibs.org
+
+Space! Yay!
+
+*/
