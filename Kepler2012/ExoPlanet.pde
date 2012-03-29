@@ -4,9 +4,9 @@ ExoPlanet Class
 blprnt@blprnt.com
 Spring, 2011 - new data added Spring 2012
 
-There are two separate formats for the data - both are lsited below.
+There are two separate formats for the data - both are listed below.
 
- //*** 2011 Batch
+ //  2011 Batch
  
  KOI,
  Dur,           : [1] Transit duration, first contact to last contact - HOURS
@@ -21,16 +21,15 @@ There are two separate formats for the data - both are lsited below.
  a,             :[15] Semi-major axis of orbit based - AU (?)
  Teq,           :[16]Equilibrium temperature of the planet - KELVIN
  EB prob,
- V,             :[18] Vetting flag 
- 1 Confirmed and published planet 
- 2 Strong probability candidate, cleanly passes tests that were applied 
- 3 Moderate probability candidate, not all tests cleanly passed but no definite test failures 
- 4 Insufficient follow-up to perform full suite of vetting tests 
- 
+ V,             :[18] Vetting flag: 
+                         1 Confirmed and published planet 
+                         2 Strong probability candidate, cleanly passes tests that were applied 
+                         3 Moderate probability candidate, not all tests cleanly passed but no definite test failures 
+                         4 Insufficient follow-up to perform full suite of vetting tests 
  FOP,
  N,
  
- //*** 2012 Batch
+ // 2012 Batch
  
  --------------------------------------------------------------------------------
  1-  7 F7.2   ---   KOI    Kepler Object of Interest number
@@ -54,19 +53,16 @@ There are two separate formats for the data - both are lsited below.
 
 
 class ExoPlanet {
-  //Data from the imported files
+  // Data from the imported files
   String KOI;
 
-  float dur;
-  float depth;
   float period;
-  float radiusRatio;
   float radius;
   float temp;
   float axis;
   int vFlag = 1;
   
-  //Real movement/render properties
+  // Real movement/render properties
   float theta = 0;
   float thetaSpeed = 0;
   float pixelRadius = 0;
@@ -80,13 +76,11 @@ class ExoPlanet {
   boolean feature = false;
   String label = "";
 
-  //Constructor function
-  ExoPlanet() {
-  };
+  // Constructor function
+  ExoPlanet() {};
   
-  //Load exoplanet data from a comma-delimited string (see key at top of class)
+  // Load exoplanet data from a comma-delimited string (see key at top of class)
   ExoPlanet fromCSV2012(String[] sa) {
-
     KOI = sa[0];
     period = float(sa[1]);
     radius = float(sa[2]);
@@ -95,56 +89,47 @@ class ExoPlanet {
     return(this);
   }
 
-  //Load exoplanet data from a comma-delimited string (see key at top of class)
+  // Load exoplanet data from a comma-delimited string (see key at top of class)
   ExoPlanet fromCSV(String[] sa) {
     KOI = sa[0];
-    dur = float(sa[1]);
-    depth = float(sa[2]);
     period = float(sa[6]);
-    radiusRatio = float(sa[10]);
     radius = float(sa[14]);
     axis = float(sa[15]);
     temp = float(sa[16]);
-    vFlag =int(sa[18]);
+    vFlag = int(sa[18]);
     return(this);
   }
 
-  //Intitialize pixel-based motion data, color, etc. from exoplanet data
+  // Initialize pixel-based motion data, color, etc. from exoplanet data
   ExoPlanet init() {
-
-
     pixelRadius = radius * ER;
     pixelAxis = axis * AU;
+
     float periodInYears = period/365;
     float periodInFrames = periodInYears * YEAR;
-
     theta = random(2 * PI);
     thetaSpeed = (2 * PI) / periodInFrames;
 
-    colorMode(HSB);
-    col = color(map(sqrt(temp), sqrt(minTemp), sqrt(maxTemp - 1800), 200, 0), 255, 255);
-    colorMode(RGB);
-
     return(this);
   }
 
-  //Update
+  // Update
   void update() {
     theta += thetaSpeed;
     z += (tz - z) * 0.1;
   }
 
-  //Draw
+  // Draw
   void render() {
     float apixelAxis = pixelAxis;
     if (axis > 1.06 && feature) {
-      apixelAxis = ((1.06 + ((axis - 1.06) * ( 1- flatness))) * AU) + axis * 10;
-    };
+      apixelAxis = ((1.06 + ((axis - 1.06) * ( 1 - flatness))) * AU) + axis * 10;
+    }
     float x = sin(theta * (1 - flatness)) * apixelAxis;
     float y = cos(theta * (1 - flatness)) * apixelAxis;
     pushMatrix();
     translate(x, y, z);
-    //Billboard
+    // Billboard
     rotateZ(-rot.z);
     rotateX(-rot.x);
     noStroke();
