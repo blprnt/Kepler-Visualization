@@ -50,9 +50,12 @@ float tflatness = 0;
 Controls controls; 
 int showControls;
 boolean draggingZoomSlider = false;
+boolean shouldRender = false;
+boolean shouldSave = false;
+int scaleValue = 1;
 
 void setup() {
-  size(screenWidth, screenHeight, OPENGL);
+  size(screenWidth, screenHeight, P3D);
   background(0);
   smooth();  
 
@@ -67,10 +70,9 @@ void setup() {
   println(planets.size());
   addMarkerPlanets();
   updatePlanetColors();
-  
+
   controls = new Controls();
   showControls = 1;
-  
 }
 
 void getPlanets(String url, boolean is2012) {
@@ -93,7 +95,7 @@ void getPlanets(String url, boolean is2012) {
     if (p.KOI.equals("326.01") || p.KOI.equals("314.02")) {
       p.feature = true;
       p.label = p.KOI;
-    } 
+    }
   }
 }
 
@@ -171,18 +173,51 @@ void addMarkerPlanets() {
 }
 
 void draw() {
-  update();  
+  update();
+  if ( shouldRender )  
+  { 
+    render();
+  }
+
+  if ( shouldSave )
+  {
+    saveImage();
+    shouldSave = false;
+  }
+}
+
+void saveImage()
+{
+  scaleValue = 4;
+  String timeStamp = hour() + "_"  + minute() + "_" + second();
+  
+  for( int xOffset = 0; xOffset < scaleValue; ++xOffset )
+  {
+    for( int yOffset = 0; yOffset < scaleValue; ++yOffset )
+    {
+      pushMatrix();
+      scale( scaleValue );
+      translate( xOffset * (-width / scaleValue), yOffset * (-height / scaleValue) );
+      render();
+      println("Rendering a tile");
+      save("tiles/" + timeStamp + "/keptile-" + xOffset + "-" + yOffset + ".png");
+      popMatrix();
+    }
+  }
+  scaleValue = 1;
   render();
+  save("tiles/" + timeStamp + "/keptile-preview.png");
 }
 
 void update()
 {
   // Ease rotation vectors, zoom
   zoom += (tzoom - zoom) * 0.01;     
-  if (zoom < 0)  {
-     zoom = 0;
-  } else if (zoom > 3.0) {
-     zoom = 3.0;
+  if (zoom < 0) {
+    zoom = 0;
+  } 
+  else if (zoom > 3.0) {
+    zoom = 3.0;
   }
   controls.updateZoomSlider(zoom);  
   rot.x += (trot.x - rot.x) * 0.1;
@@ -194,29 +229,29 @@ void update()
 
   // MousePress - Controls Handling 
   if (mousePressed) {
-     if((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY)) {
-        draggingZoomSlider = true;
-        zoom = controls.getZoomValue(mouseY);        
-        tzoom = zoom;
-     } 
-     
-     // MousePress - Rotation Adjustment
-     else if (!draggingZoomSlider) {
-       trot.x += (pmouseY - mouseY) * 0.01;
-       trot.z += (pmouseX - mouseX) * 0.01;
-     }
+    if ((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY)) {
+      draggingZoomSlider = true;
+      zoom = controls.getZoomValue(mouseY);        
+      tzoom = zoom;
+    } 
+
+    // MousePress - Rotation Adjustment
+    else if (!draggingZoomSlider) {
+      trot.x += (pmouseY - mouseY) * 0.01;
+      trot.z += (pmouseX - mouseX) * 0.01;
+    }
   }
 }
 
 void render()
 {
-    background(10);
-  
+  background(10);
+
   // show controls
   if (showControls == 1) {
-     controls.render(); 
+    controls.render();
   }
-    
+
   // We want the center to be in the middle and slightly down when flat, and to the left and down when raised
   translate(width/2 - (width * flatness * 0.4), height/2 + (160 * rot.x));
   rotateX(rot.x);
@@ -297,7 +332,7 @@ void render()
       p.update();
       p.render();
     }
-  }   
+  }
 }
 
 void sortBySize() {
@@ -323,10 +358,11 @@ void unSort() {
 
 void keyPressed() {
   String timeStamp = hour() + "_"  + minute() + "_" + second();
-  if (key == 's') {
-    save("out/Kepler" + timeStamp + ".png");
-  } else if (key == 'c'){
-     showControls = -1 * showControls;
+//  if (key == 's') {
+//    save("out/Kepler" + timeStamp + ".png");
+//  } 
+  if (key == 'c') {
+    showControls = -1 * showControls;
   }
 
   if (keyCode == UP) {
@@ -366,6 +402,15 @@ void keyPressed() {
     tflatness = (tflatness == 1) ? (0):(1);
     toggleFlatness(tflatness);
   }
+
+  if ( key == 'r' )
+  {
+    shouldRender = !shouldRender;
+  }
+  else if( key == 's' )
+  {
+    shouldSave = true;
+  }
 }
 
 void toggleFlatness(float f) {
@@ -380,8 +425,6 @@ void toggleFlatness(float f) {
 }
 
 void mouseReleased() {
-   draggingZoomSlider = false;
+  draggingZoomSlider = false;
 }
-
-
 
