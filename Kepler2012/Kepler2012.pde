@@ -171,6 +171,12 @@ void addMarkerPlanets() {
 }
 
 void draw() {
+  update();  
+  render();
+}
+
+void update()
+{
   // Ease rotation vectors, zoom
   zoom += (tzoom - zoom) * 0.01;     
   if (zoom < 0)  {
@@ -200,10 +206,11 @@ void draw() {
        trot.z += (pmouseX - mouseX) * 0.01;
      }
   }
+}
 
-
-
-  background(10);
+void render()
+{
+    background(10);
   
   // show controls
   if (showControls == 1) {
@@ -290,12 +297,7 @@ void draw() {
       p.update();
       p.render();
     }
-  }    
-  
-
-  
-
-  
+  }   
 }
 
 void sortBySize() {
