@@ -55,7 +55,7 @@ boolean shouldSave = false;
 int scaleValue = 1;
 
 void setup() {
-  size(screenWidth, screenHeight, P3D);
+  size(1024, 768, OPENGL);
   background(0);
   smooth();  
 
@@ -174,37 +174,50 @@ void addMarkerPlanets() {
 
 void draw() {
   update();
-  if ( shouldRender )  
-  { 
-    render();
-  }
 
   if ( shouldSave )
   {
     saveImage();
     shouldSave = false;
   }
+  
+  if ( shouldRender )  
+  { 
+    render();
+  }
 }
 
 void saveImage()
 {
-  scaleValue = 4;
+  scaleValue = 8;
+  float FOV = 60.0f;
+  float mod = 1.0f / 10.0f;
+  float cameraZ = (height / 2.0f) / tan(PI * FOV / 360.0f);
   String timeStamp = hour() + "_"  + minute() + "_" + second();
-  
-  for( int xOffset = 0; xOffset < scaleValue; ++xOffset )
+
+  for ( int xOffset = 0; xOffset < scaleValue; ++xOffset )
   {
-    for( int yOffset = 0; yOffset < scaleValue; ++yOffset )
+    for ( int yOffset = 0; yOffset < scaleValue; ++yOffset )
     {
       pushMatrix();
-      scale( scaleValue );
-      translate( xOffset * (-width / scaleValue), yOffset * (-height / scaleValue) );
+      camera(  width/2.0f, height/2.0f, cameraZ, 
+               width/2.0f, height/2.0f, 0, 0, 1, 0);
+      frustum(width * ((float)xOffset / (float)scaleValue - .5f) * mod, 
+      width * ((xOffset + 1) / (float)scaleValue - .5f) * mod, 
+      height * ((float)yOffset / (float)scaleValue - .5f) * mod, 
+      height * ((yOffset + 1) / (float)scaleValue - .5f) * mod, 
+      cameraZ*mod, 10000);
       render();
       println("Rendering a tile");
-      save("tiles/" + timeStamp + "/keptile-" + xOffset + "-" + yOffset + ".png");
+      save("tiles/" + timeStamp + "/keptile-" + xOffset + "-" + (scaleValue - (yOffset+1)) + ".png");
       popMatrix();
     }
   }
-  scaleValue = 1;
+  camera(width/2.0f, height/2.0f, cameraZ, 
+  width/2.0f, height/2.0f, 0, 0, 1, 0);
+  frustum(-(width/2)*mod, (width/2)*mod, 
+  -(height/2)*mod, (height/2)*mod, 
+  cameraZ*mod, 10000);
   render();
   save("tiles/" + timeStamp + "/keptile-preview.png");
 }
@@ -358,9 +371,9 @@ void unSort() {
 
 void keyPressed() {
   String timeStamp = hour() + "_"  + minute() + "_" + second();
-//  if (key == 's') {
-//    save("out/Kepler" + timeStamp + ".png");
-//  } 
+  //  if (key == 's') {
+  //    save("out/Kepler" + timeStamp + ".png");
+  //  } 
   if (key == 'c') {
     showControls = -1 * showControls;
   }
@@ -407,7 +420,7 @@ void keyPressed() {
   {
     shouldRender = !shouldRender;
   }
-  else if( key == 's' )
+  else if ( key == 's' )
   {
     shouldSave = true;
   }
