@@ -52,7 +52,6 @@ int showControls;
 boolean draggingZoomSlider = false;
 boolean shouldRender = false;
 boolean shouldSave = false;
-int scaleValue = 1;
 
 void setup() {
   size(1024, 768, OPENGL);
@@ -72,7 +71,7 @@ void setup() {
   updatePlanetColors();
 
   controls = new Controls();
-  showControls = 1;
+  showControls = -1;
 }
 
 void getPlanets(String url, boolean is2012) {
@@ -189,7 +188,7 @@ void draw() {
 
 void saveImage()
 {
-  scaleValue = 8;
+  int scaleValue = 12;
   float FOV = 60.0f;
   float mod = 1.0f / 10.0f;
   float cameraZ = (height / 2.0f) / tan(PI * FOV / 360.0f);
@@ -208,7 +207,7 @@ void saveImage()
       height * ((yOffset + 1) / (float)scaleValue - .5f) * mod, 
       cameraZ*mod, 10000);
       render();
-      println("Rendering a tile");
+      println("Rendering tile: " + (xOffset * scaleValue + yOffset) + " of " + scaleValue * scaleValue);
       save("tiles/" + timeStamp + "/keptile-" + xOffset + "-" + (scaleValue - (yOffset+1)) + ".png");
       popMatrix();
     }
@@ -419,10 +418,12 @@ void keyPressed() {
   if ( key == 'r' )
   {
     shouldRender = !shouldRender;
+    println("Toggled rendering: " + shouldRender );
   }
   else if ( key == 's' )
   {
     shouldSave = true;
+    println("Will save momentarily");
   }
 }
 
