@@ -70,7 +70,7 @@ void setup() {
   updatePlanetColors();
 
   controls = new Controls();
-  showControls = -1;
+  showControls = 1;
 }
 
 void getPlanets(String url, boolean is2012) {
