@@ -348,9 +348,14 @@ void unSort() {
 
 void keyPressed() {
   String timeStamp = hour() + "_"  + minute() + "_" + second();
-  //  if (key == 's') {
-  //    save("out/Kepler" + timeStamp + ".png");
-  //  } 
+  if (key == 's') {
+    save("out/Kepler" + timeStamp + ".png");
+  }
+  else if ( key == 'S' )
+  {
+    shouldSave = true;
+    println("Will save tiles promptly");
+  }
   if (key == 'c') {
     showControls = -1 * showControls;
   }
@@ -393,11 +398,6 @@ void keyPressed() {
     toggleFlatness(tflatness);
   }
 
-  else if ( key == 's' )
-  {
-    shouldSave = true;
-    println("Will save momentarily");
-  }
 }
 
 void toggleFlatness(float f) {
