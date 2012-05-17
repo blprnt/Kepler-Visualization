@@ -50,7 +50,6 @@ float tflatness = 0;
 Controls controls; 
 int showControls;
 boolean draggingZoomSlider = false;
-boolean shouldRender = false;
 boolean shouldSave = false;
 
 void setup() {
@@ -176,47 +175,21 @@ void draw() {
 
   if ( shouldSave )
   {
-    saveImage();
+    saveTiledImage();
     shouldSave = false;
   }
 
-  if ( shouldRender )  
-  { 
-    render();
-  }
+  render();
 }
 
-void saveImage()
+void saveTiledImage()
 {
-  int scaleValue = 16;
-  float FOV = 60.0f;
-  float mod = 1.0f / 10.0f;
-  float cameraZ = (height / 2.0f) / tan(PI * FOV / 360.0f);
   String timeStamp = hour() + "_"  + minute() + "_" + second();
-
-  for ( int xOffset = 0; xOffset < scaleValue; ++xOffset )
+  TileRenderer renderer = new TileRenderer(8, "tiles/" + timeStamp + "/keptile-" );
+  while( renderer.next() )
   {
-    for ( int yOffset = 0; yOffset < scaleValue; ++yOffset )
-    {
-      pushMatrix();
-      camera(  width/2.0f, height/2.0f, cameraZ, 
-      width/2.0f, height/2.0f, 0, 0, 1, 0);
-      frustum(width * ((float)xOffset / (float)scaleValue - .5f) * mod, 
-      width * ((xOffset + 1) / (float)scaleValue - .5f) * mod, 
-      height * ((float)yOffset / (float)scaleValue - .5f) * mod, 
-      height * ((yOffset + 1) / (float)scaleValue - .5f) * mod, 
-      cameraZ*mod, 10000);
-      render();
-      println("Rendering tile: " + (xOffset * scaleValue + yOffset) + " of " + scaleValue * scaleValue);
-      save("tiles/" + timeStamp + "/keptile-" + xOffset + "-" + (scaleValue - (yOffset+1)) + ".png");
-      popMatrix();
-    }
+    render();
   }
-  camera(width/2.0f, height/2.0f, cameraZ, 
-  width/2.0f, height/2.0f, 0, 0, 1, 0);
-  frustum(-(width/2)*mod, (width/2)*mod, 
-  -(height/2)*mod, (height/2)*mod, 
-  cameraZ*mod, 10000);
   render();
   save("tiles/" + timeStamp + "/keptile-preview.png");
 }
@@ -420,11 +393,6 @@ void keyPressed() {
     toggleFlatness(tflatness);
   }
 
-  if ( key == 'r' )
-  {
-    shouldRender = !shouldRender;
-    println("Toggled rendering: " + shouldRender );
-  }
   else if ( key == 's' )
   {
     shouldSave = true;
