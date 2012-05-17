@@ -6,6 +6,8 @@
  
  Inspiration from Cinder::TileRender and unlekkerlib
  Assumes that you aren't calling camera() yourself
+ TileRenderer can be found in http://github.com/sansumbrella/processing-pockets
+ You can also find a TileAssembler there.
  
  Example usage:
  TileRenderer renderer(8, ); // 8x size
