@@ -53,7 +53,7 @@ boolean draggingZoomSlider = false;
 boolean shouldSave = false;
 
 void setup() {
-  size(1024, 768, OPENGL);
+  size(screenWidth, screenHeight, OPENGL);
   background(0);
   smooth();  
 
