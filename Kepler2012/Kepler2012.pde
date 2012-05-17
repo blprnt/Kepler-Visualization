@@ -179,7 +179,7 @@ void draw() {
     saveImage();
     shouldSave = false;
   }
-  
+
   if ( shouldRender )  
   { 
     render();
@@ -188,7 +188,7 @@ void draw() {
 
 void saveImage()
 {
-  int scaleValue = 12;
+  int scaleValue = 16;
   float FOV = 60.0f;
   float mod = 1.0f / 10.0f;
   float cameraZ = (height / 2.0f) / tan(PI * FOV / 360.0f);
@@ -200,7 +200,7 @@ void saveImage()
     {
       pushMatrix();
       camera(  width/2.0f, height/2.0f, cameraZ, 
-               width/2.0f, height/2.0f, 0, 0, 1, 0);
+      width/2.0f, height/2.0f, 0, 0, 1, 0);
       frustum(width * ((float)xOffset / (float)scaleValue - .5f) * mod, 
       width * ((xOffset + 1) / (float)scaleValue - .5f) * mod, 
       height * ((float)yOffset / (float)scaleValue - .5f) * mod, 
@@ -251,6 +251,13 @@ void update()
     else if (!draggingZoomSlider) {
       trot.x += (pmouseY - mouseY) * 0.01;
       trot.z += (pmouseX - mouseX) * 0.01;
+    }
+  }
+
+  for ( ExoPlanet p : planets )
+  {
+    if ( p.vFlag < 4 ) {
+      p.update();
     }
   }
 }
@@ -338,10 +345,8 @@ void render()
   popMatrix();
 
   // Render the planets
-  for (int i = 0; i < planets.size(); i++) {
-    ExoPlanet p = planets.get(i);
+  for ( ExoPlanet p : planets ) {
     if (p.vFlag < 4) {
-      p.update();
       p.render();
     }
   }
