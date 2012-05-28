@@ -188,7 +188,7 @@ void draw() {
 
   // MousePress - Controls Handling 
   if (mousePressed) {
-     if((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY)) {
+     if((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY, draggingZoomSlider)) {
         draggingZoomSlider = true;
         zoom = controls.getZoomValue(mouseY);        
         tzoom = zoom;
@@ -323,7 +323,7 @@ void keyPressed() {
   String timeStamp = hour() + "_"  + minute() + "_" + second();
   if (key == 's') {
     save("out/Kepler" + timeStamp + ".png");
-  } else if (key == 'c'){
+  } else if (key == 'c') {
      showControls = -1 * showControls;
   }
 
@@ -335,6 +335,7 @@ void keyPressed() {
   }
 
   if (key == '1') {
+    controls.setOption("1");
     sortBySize(); 
     toggleFlatness(1);
     yLabel = "Planet Size (Earth Radii)";
@@ -342,6 +343,7 @@ void keyPressed() {
     yMin = 0;
   } 
   else if (key == '2') {
+    controls.setOption("2");
     sortByTemp(); 
     trot.x = PI/2;
     yLabel = "Temperature (Kelvin)";
@@ -350,17 +352,21 @@ void keyPressed() {
     yMin = minTemp;
   } 
   else if (key == '`') {
+    controls.setOption("`");
     unSort(); 
     toggleFlatness(0);
   }
   else if (key == '3') {
+    controls.setOption("3");
     trot.x = 1.5;
   }
   else if (key == '4') {
+    controls.setOption("4");
     tzoom = 1;
   }
 
   if (key == 'f') {
+    controls.setOption("f");
     tflatness = (tflatness == 1) ? (0):(1);
     toggleFlatness(tflatness);
   }
@@ -377,6 +383,37 @@ void toggleFlatness(float f) {
   }
 }
 
+void mousePressed() {
+  if((showControls == 1) && controls.isOptionsEvent(mouseX, mouseY)) {
+     String option = controls.getSelectedOption(mouseX, mouseY);
+     if (option.equals("`")) {
+        unSort(); 
+        toggleFlatness(0);           
+     } else if (option.equals("1")) {
+        sortBySize(); 
+        toggleFlatness(1);
+        yLabel = "Planet Size (Earth Radii)";
+        yMax = maxSize;
+        yMin = 0;                
+     } else if (option.equals("2")) {
+        sortByTemp(); 
+        trot.x = PI/2;
+        yLabel = "Temperature (Kelvin)";
+        //toggleFlatness(1);
+        yMax = maxTemp;
+        yMin = minTemp;        
+     } else if (option.equals("3")) {
+        trot.x = 1.5;        
+     } else if (option.equals("4")) { 
+        tzoom = 1;
+     } else if (option.equals("f")) { 
+        tflatness = (tflatness == 1) ? (0):(1);
+        toggleFlatness(tflatness);
+     }    
+  } 
+
+}
+   
 void mouseReleased() {
    draggingZoomSlider = false;
 }
