@@ -2,7 +2,9 @@
 
  Kepler Visualization - Controls
  
- GUI controls added by Lon Riesberg, Laboratory for Atmospheric and Space Physics
+ GUI controls added by Lon Riesberg, Laboratory for Atmospheric and Space Physics, University of Colorado, Boulder
+ 
+ wwww.lonriesberg.com
  lon@ieee.org
  
  April, 2012
