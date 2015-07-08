@@ -366,6 +366,23 @@ void keyPressed() {
   }
 }
 
+// MouseWheel - zoom controller (auto-triggered on event: mousewheel)
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  float tempzoom = zoom;
+  if (tempzoom >= controls.minZoomValue && tempzoom <= controls.maxZoomValue) {
+    if (tempzoom >0.15) {
+      tempzoom += (e*(0.05*tempzoom));
+    } else { //tempzoom >= 0.15
+      tempzoom += (e*0.0075);
+    }
+  }
+  if (tempzoom < controls.maxZoomValue && tempzoom > controls.minZoomValue) { 
+    tzoom = tempzoom + (e * (0.112*tempzoom)); 
+    zoom = tempzoom;
+  }
+}
+
 void toggleFlatness(float f) {
   tflatness = f;
   if (tflatness == 1) {
