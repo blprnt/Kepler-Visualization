@@ -52,7 +52,7 @@ int showControls;
 boolean draggingZoomSlider = false;
 
 void setup() {
-  size(screenWidth, screenHeight, OPENGL);
+  size(displayWidth, displayHeight, OPENGL);
   background(0);
   smooth();  
 
