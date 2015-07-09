@@ -50,6 +50,7 @@ float tflatness = 0;
 Controls controls; 
 int showControls;
 boolean draggingZoomSlider = false;
+boolean shouldSave = false;
 
 void setup() {
   size(displayWidth, displayHeight, OPENGL);
@@ -67,10 +68,9 @@ void setup() {
   println(planets.size());
   addMarkerPlanets();
   updatePlanetColors();
-  
+
   controls = new Controls();
   showControls = 1;
-  
 }
 
 void getPlanets(String url, boolean is2012) {
@@ -93,7 +93,7 @@ void getPlanets(String url, boolean is2012) {
     if (p.KOI.equals("326.01") || p.KOI.equals("314.02")) {
       p.feature = true;
       p.label = p.KOI;
-    } 
+    }
   }
 }
 
@@ -171,12 +171,38 @@ void addMarkerPlanets() {
 }
 
 void draw() {
+  update();
+
+  if ( shouldSave )
+  {
+    saveTiledImage();
+    shouldSave = false;
+  }
+
+  render();
+}
+
+void saveTiledImage()
+{
+  String timeStamp = hour() + "_"  + minute() + "_" + second();
+  TileRenderer renderer = new TileRenderer(8, "tiles/" + timeStamp + "/keptile-" );
+  while( renderer.next() )
+  {
+    render();
+  }
+  render();
+  save("tiles/" + timeStamp + "/keptile-preview.png");
+}
+
+void update()
+{
   // Ease rotation vectors, zoom
   zoom += (tzoom - zoom) * 0.01;     
-  if (zoom < 0)  {
-     zoom = 0;
-  } else if (zoom > 3.0) {
-     zoom = 3.0;
+  if (zoom < 0) {
+    zoom = 0;
+  } 
+  else if (zoom > 3.0) {
+    zoom = 3.0;
   }
   controls.updateZoomSlider(zoom);  
   rot.x += (trot.x - rot.x) * 0.1;
@@ -188,28 +214,36 @@ void draw() {
 
   // MousePress - Controls Handling 
   if (mousePressed) {
-     if((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY)) {
-        draggingZoomSlider = true;
-        zoom = controls.getZoomValue(mouseY);        
-        tzoom = zoom;
-     } 
-     
-     // MousePress - Rotation Adjustment
-     else if (!draggingZoomSlider) {
-       trot.x += (pmouseY - mouseY) * 0.01;
-       trot.z += (pmouseX - mouseX) * 0.01;
-     }
+    if ((showControls == 1) && controls.isZoomSliderEvent(mouseX, mouseY)) {
+      draggingZoomSlider = true;
+      zoom = controls.getZoomValue(mouseY);        
+      tzoom = zoom;
+    } 
+
+    // MousePress - Rotation Adjustment
+    else if (!draggingZoomSlider) {
+      trot.x += (pmouseY - mouseY) * 0.01;
+      trot.z += (pmouseX - mouseX) * 0.01;
+    }
   }
 
+  for ( ExoPlanet p : planets )
+  {
+    if ( p.vFlag < 4 ) {
+      p.update();
+    }
+  }
+}
 
-
+void render()
+{
   background(10);
-  
+
   // show controls
   if (showControls == 1) {
-     controls.render(); 
+    controls.render();
   }
-    
+
   // We want the center to be in the middle and slightly down when flat, and to the left and down when raised
   translate(width/2 - (width * flatness * 0.4), height/2 + (160 * rot.x));
   rotateX(rot.x);
@@ -284,18 +318,11 @@ void draw() {
   popMatrix();
 
   // Render the planets
-  for (int i = 0; i < planets.size(); i++) {
-    ExoPlanet p = planets.get(i);
+  for ( ExoPlanet p : planets ) {
     if (p.vFlag < 4) {
-      p.update();
       p.render();
     }
-  }    
-  
-
-  
-
-  
+  }
 }
 
 void sortBySize() {
@@ -323,8 +350,14 @@ void keyPressed() {
   String timeStamp = hour() + "_"  + minute() + "_" + second();
   if (key == 's') {
     save("out/Kepler" + timeStamp + ".png");
-  } else if (key == 'c'){
-     showControls = -1 * showControls;
+  }
+  else if ( key == 'S' )
+  {
+    shouldSave = true;
+    println("Will save tiles promptly");
+  }
+  if (key == 'c') {
+    showControls = -1 * showControls;
   }
 
   if (keyCode == UP) {
@@ -364,6 +397,7 @@ void keyPressed() {
     tflatness = (tflatness == 1) ? (0):(1);
     toggleFlatness(tflatness);
   }
+
 }
 
 // MouseWheel - zoom controller (auto-triggered on event: mousewheel)
@@ -395,8 +429,6 @@ void toggleFlatness(float f) {
 }
 
 void mouseReleased() {
-   draggingZoomSlider = false;
+  draggingZoomSlider = false;
 }
-
-
 
