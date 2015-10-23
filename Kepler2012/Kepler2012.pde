@@ -8,7 +8,6 @@
  */
 
 // Import libraries
-import processing.opengl.*;
 PFont label;
 
 // Here's the big list that will hold all of our planets
@@ -54,7 +53,6 @@ boolean draggingZoomSlider = false;
 void setup() {
   fullScreen(P3D);
   background(0);
-  smooth();  
   
   label = createFont("Helvetica", 96);
 
