@@ -87,7 +87,7 @@ class Controls {
       int slop = 50;  // number of pixels above or below slider that's acceptable.  provided for ease of use.
       int sliderTop = (int) (sliderY - (sliderHeight/2)) - slop;
       int sliderBottom = sliderY + sliderHeight + slop;
-      return ((x >= sliderX) && (x <= (sliderX    + sliderWidth)) && (y >= sliderTop)  && (y <= sliderBottom));
+      return ((x >= sliderX) && (x <= (sliderX    + sliderWidth)) && (y >= sliderTop)  && (y <= sliderBottom) || draggingZoomSlider );
    } 
 }
 

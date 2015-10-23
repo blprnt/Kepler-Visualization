@@ -53,7 +53,6 @@ boolean draggingZoomSlider = false;
 
 void setup() {
   fullScreen(P3D);
-  //size(displayWidth, displayHeight, OPENGL);
   background(0);
   smooth();  
   
@@ -366,6 +365,23 @@ void keyPressed() {
   if (key == 'f') {
     tflatness = (tflatness == 1) ? (0):(1);
     toggleFlatness(tflatness);
+  }
+}
+
+// MouseWheel - zoom controller (auto-triggered on event: mousewheel)
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  float tempzoom = zoom;
+  if (tempzoom >= controls.minZoomValue && tempzoom <= controls.maxZoomValue) {
+    if (tempzoom >0.15) {
+      tempzoom += (e*(0.05*tempzoom));
+    } else { //tempzoom >= 0.15
+      tempzoom += (e*0.0075);
+    }
+  }
+  if (tempzoom < controls.maxZoomValue && tempzoom > controls.minZoomValue) { 
+    tzoom = tempzoom + (e * (0.112*tempzoom)); 
+    zoom = tempzoom;
   }
 }
 
