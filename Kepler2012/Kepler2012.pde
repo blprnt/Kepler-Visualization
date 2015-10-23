@@ -8,8 +8,7 @@
  */
 
 // Import libraries
-import processing.opengl.*;
-PFont label = createFont("Helvetica", 96);
+PFont label;
 
 // Here's the big list that will hold all of our planets
 ArrayList<ExoPlanet> planets = new ArrayList();
@@ -52,18 +51,19 @@ int showControls;
 boolean draggingZoomSlider = false;
 
 void setup() {
-  size(displayWidth, displayHeight, OPENGL);
+  fullScreen(P3D);
   background(0);
-  smooth();  
+  
+  label = createFont("Helvetica", 96);
 
   textFont(label, 96);
 
   // Because NASA released their data from 2011 and 2012 in somewhat
   // different formats, there are two functions to load the data and populate
   // the 'galaxy'.
-  getPlanets(sketchPath + "/data/KeplerData.csv", false);
+  getPlanets("KeplerData.csv", false);
   println(planets.size());
-  getPlanets(sketchPath + "/data/planets2012_2.csv", true);
+  getPlanets("planets2012_2.csv", true);
   println(planets.size());
   addMarkerPlanets();
   updatePlanetColors();
@@ -397,6 +397,3 @@ void toggleFlatness(float f) {
 void mouseReleased() {
    draggingZoomSlider = false;
 }
-
-
-
